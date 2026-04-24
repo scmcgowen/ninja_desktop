@@ -6,3 +6,4 @@ by default it connects to https://ninja.reconnected.cc, but the server url can b
 ## Installation
 ---
 `cargo install --git https://github.com/scmcgowen/ninja_desktop`
+The binary name will be `ninja`
