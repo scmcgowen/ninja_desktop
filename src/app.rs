@@ -187,7 +187,11 @@ impl eframe::App for AppState {
             let Some(session) = self.sessions.get_mut(&active_token) else { return };
 
             match self.main_view {
-                MainView::Terminal => ui::terminal::show(session, ui),
+                MainView::Terminal => {
+                    let settings = self.settings.clone();
+                    ui::terminal::show(session, &settings, ui);
+                    drop(settings);
+                },
                 MainView::Files => {
                     let settings = self.settings.clone();
                     let action = ui::files::show(session, &settings, ui);

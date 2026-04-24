@@ -47,7 +47,7 @@ pub fn show(session: &mut Session, settings: &Settings, ui: &mut Ui) -> FilesAct
 
             if session.files.is_empty() {
                 ui.label(
-                    RichText::new("No files yet — run `samari edit <file>` on the computer.")
+                    RichText::new("No files yet — run `ninja edit <file>` on the computer.")
                         .italics()
                         .weak(),
                 );
@@ -97,12 +97,12 @@ pub fn show(session: &mut Session, settings: &Settings, ui: &mut Ui) -> FilesAct
         show_notifications(session, ui, &mut action);
 
         let Some(name) = session.active_file.clone() else {
-            welcome_screen(session, ui);
+            welcome_screen(session, settings, ui);
             return;
         };
         let Some(idx) = session.files.iter().position(|f| f.name == name) else {
             session.active_file = None;
-            welcome_screen(session, ui);
+            welcome_screen(session, settings, ui);
             return;
         };
 
@@ -134,7 +134,7 @@ pub fn show(session: &mut Session, settings: &Settings, ui: &mut Ui) -> FilesAct
     action
 }
 
-fn welcome_screen(session: &Session, ui: &mut Ui) {
+fn welcome_screen(session: &Session, settings: &Settings, ui: &mut Ui) {
     ui.vertical_centered(|ui| {
         ui.add_space(40.0);
         ui.heading("Ninja Catcher — desktop");
@@ -146,7 +146,8 @@ fn welcome_screen(session: &Session, ui: &mut Ui) {
         ui.group(|ui| {
             ui.label("In-game setup:");
             ui.code(format!(
-                "wget https://ninja.reconnected.cc/ninja.lua\nninja.lua {}",
+                "wget https://{}/ninja.lua\nninja.lua {}",
+                settings.server_host,
                 session.token.as_str()
             ));
         });
