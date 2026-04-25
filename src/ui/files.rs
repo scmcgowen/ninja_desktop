@@ -1,7 +1,9 @@
+use arboard::Clipboard;
 use egui::{FontId, RichText, ScrollArea, Ui};
 
 use crate::session::{NotificationKind, Session, SessionStatus};
 use crate::settings::Settings;
+use egui_code_editor::{Syntax,ColorTheme,CodeEditor};
 
 pub enum FilesAction {
     Idle,
@@ -119,22 +121,28 @@ pub fn show(session: &mut Session, settings: &Settings, ui: &mut Ui) -> FilesAct
         });
         ui.separator();
 
-        let text_edit = egui::TextEdit::multiline(&mut file.buffer)
-            .font(FontId::monospace(settings.font_size))
-            .code_editor()
-            .desired_width(f32::INFINITY)
-            .desired_rows(24)
-            .interactive(!file.read_only);
-
         ScrollArea::vertical()
             .auto_shrink([false; 2])
-            .show(ui, |ui| { ui.add_sized(ui.available_size(), text_edit); });
+            .show(ui, |ui| {
+                CodeEditor::default()
+                    .id_source("code_editor")
+                    .with_rows(24)
+                    .with_fontsize(14.0)
+                    .with_theme(ColorTheme::GRUVBOX)
+                    .with_syntax(Syntax::lua())
+                    .with_numlines(true)
+                    .show(ui, &mut file.buffer);
+            });
     });
+
+
+
 
     action
 }
 
 fn welcome_screen(session: &Session, settings: &Settings, ui: &mut Ui) {
+    let mut clipboard = Clipboard::new().unwrap();
     ui.vertical_centered(|ui| {
         ui.add_space(40.0);
         ui.heading("Ninja Catcher — desktop");
@@ -145,11 +153,18 @@ fn welcome_screen(session: &Session, settings: &Settings, ui: &mut Ui) {
         ui.add_space(12.0);
         ui.group(|ui| {
             ui.label("In-game setup:");
-            ui.code(format!(
-                "wget https://{}/ninja.lua\nninja.lua {}",
-                settings.server_host,
-                session.token.as_str()
-            ));
+            let code = format!("wget https://{}/ninja.lua\nninja.lua {}", settings.server_host, session.token.as_str());
+            ui.code(code);
+
+            ui.add_space(12.0);
+            if ui.button("Copy URL").clicked() {
+                let url = format!("https://{}/ninja.lua", settings.server_host);
+                let _ = clipboard.set_text(url);
+            }
+            if ui.button("Copy Setup Command").clicked() {
+                let url = format!("ninja.lua {}", session.token.as_str());
+                let _ = clipboard.set_text(url);
+            }
         });
     });
 }

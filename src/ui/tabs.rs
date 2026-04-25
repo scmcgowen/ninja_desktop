@@ -88,7 +88,7 @@ fn tab_button(ui: &mut Ui, session: &Session, is_active: bool) -> Option<TabActi
     egui::Frame::none()
         .fill(frame_color)
         .stroke(Stroke::new(1.0, ui.visuals().widgets.noninteractive.bg_stroke.color))
-        .inner_margin(egui::Margin::symmetric(6.0, 4.0))
+        .inner_margin(egui::Margin::symmetric(6, 4))
         .show(ui, |ui| {
             ui.horizontal(|ui| {
                 let label = ui.add(egui::Label::new(text).sense(egui::Sense::click()));

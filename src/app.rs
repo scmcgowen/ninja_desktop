@@ -1,3 +1,4 @@
+use egui::Ui;
 use indexmap::IndexMap;
 use std::sync::Arc;
 use tokio::runtime::Runtime;
@@ -105,7 +106,9 @@ impl AppState {
 }
 
 impl eframe::App for AppState {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+
+    fn ui(&mut self, ctx: &mut Ui, _frame: &mut eframe::Frame) {
+
         // 1. Apply theme.
         ctx.set_visuals(if self.settings.dark_mode {
             egui::Visuals::dark()
